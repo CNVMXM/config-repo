@@ -11,7 +11,7 @@ spring:
   cloud:
     gateway:
       routes:
-        customer-server-url: lb://portfolio-service
+        portfolio-server-url: lb://portfolio-service
         discovery-server-url: http://localhost:8761
 
 logging:
