@@ -1,24 +1,51 @@
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
-
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5435/aggregatordb
-    username: user
-    password: password
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  kafka:
     properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        enable_lazy_load_no_trans: true
+      num.partitions: 3                       # Количество партиций по умолчанию
+      default.replication.factor: 3           # Фактор репликации
+      min.insync.replicas: 2                  # Минимальная количество реплик в синхронизации
+      log.retention.hours: 168                # Время хранения логов в часах
+      log.cleanup.policy: compact             # Политика очистки логов
+      delete.retention.ms: 86400000           # Время хранения удаленных сообщений
+      connections.max.idle.ms: 10000          # Максимальное время простоя соединения
+      security.inter.broker.protocol: PLAINTEXT # Протокол для связи между брокерами
+
+    bootstrap-servers: localhost:9092   # Адреса Kafka брокеров
+
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer # Cериализатор ключей
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Cериализатор значений
+      acks: all                            # Все реплики должны подтвердить запись
+      retries: 3    # Количество повторных попыток при неудаче
+      properties:
+        linger.ms: 5                        # Задержка перед отправкой сообщений, если нет ошибок
+        batch.size: 16384                   # Размер партии сообщений
+        buffer.memory: 33554432             # Максимальный размер памяти для буфера сообщений (32 МБ)
+        enable.idempotence: true             # Включение идемпотентности для предотвращения дублирования
+        spring.json.trusted.packages: "com.cnvmxm.aggregatorservice.model"
+
+  application:
+    name: aggregator-service
+  config:
+    activate:
+      on-profile: dev,configserver
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    config:
+      fail-fast: true
+  scheduler:
+    enabled: true
+
+topic:
+  name: quote.topic
+
+nyse:
+  personal:
+    api-key: 3Q91ALMC4A07C0EX
+  api-key: demo
+  url: "https://www.alphavantage.co/query?function=LISTING_STATUS&apikey="
+
+server:
+  port: 8081
