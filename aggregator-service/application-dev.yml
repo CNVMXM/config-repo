@@ -18,7 +18,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.LongSerializer # Cериализатор ключей
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Cериализатор значений
       acks: all                            # Все реплики должны подтвердить запись
-      retries: 3    # Количество повторных попыток при неудаче
+      retries: 3                           # Количество повторных попыток при неудаче
       properties:
         linger.ms: 5                        # Задержка перед отправкой сообщений, если нет ошибок
         batch.size: 16384                   # Размер партии сообщений
