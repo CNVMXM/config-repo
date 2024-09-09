@@ -24,7 +24,7 @@ spring:
         batch.size: 16384                   # Размер партии сообщений
         buffer.memory: 33554432             # Максимальный размер памяти для буфера сообщений (32 МБ)
         enable.idempotence: true             # Включение идемпотентности для предотвращения дублирования
-        spring.json.trusted.packages: "com.cnvmxm.aggregatorservice.model"
+        spring.json.trusted.packages: "com.cnvmxm.aggregatorservice.dto"
 
   application:
     name: aggregator-service
